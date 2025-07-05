@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Hoodie",
+    "description": "Coupe moderne, tissu premium",
+    "image": "https://m.media-amazon.com/images/I/71mCAveDJCS._UY1000_.jpg",
+    "oldPrice": "20500",
+    "newPrice": "500"
+  },
+  {
+    "name": "Hoodie Techwear",
+    "description": "Style futuriste, qualit\u00e9 sup\u00e9rieure",
+    "image": "https://i.ebayimg.com/images/g/gaYAAOSwsTNndxA~/s-l1200.jpg",
+    "oldPrice": "20500",
+    "newPrice": "15500"
+  },
+  {
+    "name": "Sweater Cotton",
+    "description": "100% coton, confort maximal",
+    "image": "https://m.media-amazon.com/images/I/61qNLtV4SVL._UY1000_.jpg",
+    "oldPrice": "20500",
+    "newPrice": "15500"
+  },
+  {
+    "name": "Puffer Jacket Cropped",
+    "description": "Coupe moderne, isolation thermique",
+    "image": "https://img4.dhresource.com/webp/m/0x0/f3/albu/jc/n/01/938e9522-24fa-4508-8bda-f33fca677fcc.jpg",
+    "oldPrice": "28500",
+    "newPrice": "22000"
+  },
+  {
+    "name": "Bubble Puffer Black",
+    "description": "Style Y2K, streetwear authentique",
+    "image": "https://ae01.alicdn.com/kf/S3d061ab1ea9a4570aef3bd318eaf9f50w.jpg",
+    "oldPrice": "28500",
+    "newPrice": "22000"
+  },
+  {
+    "name": "T-shirt Urban Life",
+    "description": "Design graphique exclusif",
+    "image": "https://img.freepik.com/premium-vector/eighty-nine-urban-life-typography-street-wear-t-shirt-design_72192-2673.jpg",
+    "oldPrice": "",
+    "newPrice": "15500"
+  },
+  {
+    "name": "T-shirt Street Typography",
+    "description": "Collection signature streetwear",
+    "image": "https://img.freepik.com/premium-vector/urban-street-wear-typography-t-shirt-design_85212-483.jpg",
+    "oldPrice": "",
+    "newPrice": "15500"
+  }
+]
