@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trap House Society - Streetwear Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B35;
+            --secondary-color: #1A1A1A;
+            --accent-color: #00F5FF;
+            --text-light: #E0E0E0;
+            --gradient-1: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            --gradient-2: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+            --neon-glow: 0 0 20px var(--accent-color), 0 0 40px var(--accent-color), 0 0 60px var(--accent-color);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--secondary-color);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%);
+            position: relative;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23333" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)" /></svg>');
+            opacity: 0.3;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color), 0 0 30px var(--accent-color);
+        }
+
+        .neon-border {
+            border: 2px solid var(--accent-color);
+            box-shadow: var(--neon-glow);
+        }
+
+        .glitch-effect {
+            position: relative;
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .glitch-effect::before,
+        .glitch-effect::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch-effect::before {
+            animation: glitch-1 0.5s infinite;
+            color: #ff00ff;
+            z-index: -1;
+        }
+
+        .glitch-effect::after {
+            animation: glitch-2 0.5s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% {
+                transform: translate(0);
+            }
+            15%, 49% {
+                transform: translate(-2px, 0);
+            }
+        }
+
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% {
+                transform: translate(0);
+            }
+            21%, 62% {
+                transform: translate(2px, 0);
+            }
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        .price-strike {
+            position: relative;
+            color: #999;
+        }
+
+        .price-strike::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transform: skew(-15deg);
+        }
+
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .gradient-text {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .cta-button {
+            background: var(--gradient-1);
+            border: none;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+            box-shadow: var(--neon-glow);
+        }
+
+        .section-divider {
+            height: 2px;
+            background: var(--gradient-1);
+            margin: 4rem 0;
+            opacity: 0.7;
+        }
+
+        .stats-counter {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--gradient-1);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .newsletter-input {
+            background: rgba(45, 45, 45, 0.8);
+            border: 2px solid var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem;
+            border-radius: 0;
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            box-shadow: var(--neon-glow);
+        }
+
+        .testimonial-card {
+            background: rgba(45, 45, 45, 0.8);
+            border-left: 4px solid var(--primary-color);
+            padding: 2rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stats-counter {
+                font-size: 2rem;
+            }
+        }
+
+        .cms-trigger {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .cms-trigger:hover {
+            transform: scale(1.1);
+            box-shadow: var(--neon-glow);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 navbar-blur">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="logo-container">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMjgiIHN0cm9rZT0iIzFBMUExQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Ik0xNSAxNUg0NVY0NUgzNVYyNUgyNVYzNUgxNVYxNVoiIGZpbGw9IiMxQTFBMUEiLz4KPHRleHQgeD0iMzAiIHk9IjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iT3JiaXRyb24iIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxQTFBMUEiPkTRAuQVE8L3RleHQ+CjwvZz4KPC9zdmc+" alt="Trap House Society Logo" class="w-12 h-12">
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold gradient-text orbitron">TRAP HOUSE</h1>
+                        <p class="text-sm opacity-75">SOCIETY</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="hover:text-primary transition-colors">Accueil</a>
+                    <a href="#products" class="hover:text-primary transition-colors">Produits</a>
+                    <a href="#about" class="hover:text-primary transition-colors">À Propos</a>
+                    <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
+                </div>
+                
+                <button class="md:hidden text-2xl" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu fixed top-0 left-0 w-full h-full bg-black bg-opacity-95 z-40 md:hidden" id="mobile-menu">
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl">
+            <a href="#home" class="hover:text-primary transition-colors">Accueil</a>
+            <a href="#products" class="hover:text-primary transition-colors">Produits</a>
+            <a href="#about" class="hover:text-primary transition-colors">À Propos</a>
+            <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
+            <button class="absolute top-8 right-8 text-3xl" id="mobile-menu-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg min-h-screen flex items-center justify-center relative">
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <div class="floating-animation">
+                <h1 class="text-6xl md:text-8xl font-black orbitron mb-6">
+                    <span class="glitch-effect neon-text" data-text="TRAP HOUSE">TRAP HOUSE</span>
+                </h1>
+                <h2 class="text-3xl md:text-5xl font-bold gradient-text mb-8">SOCIETY</h2>
+            </div>
+            
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
+                First CLASS of <span class="text-primary font-bold">Frippery Drips</span><br>
+                Streetwear Premium • Design Exclusif • Style Urbain
+            </p>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-12">
+                <button class="cta-button px-8 py-4 text-lg">
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    DÉCOUVRIR LA COLLECTION
+                </button>
+                <div class="flex items-center space-x-4 text-lg">
+                    <i class="fas fa-phone text-primary"></i>
+                    <span>0791449915</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                <div class="text-center">
+                    <div class="stats-counter">500+</div>
+                    <p class="text-lg opacity-75">Clients Satisfaits</p>
+                </div>
+                <div class="text-center">
+                    <div class="stats-counter">50+</div>
+                    <p class="text-lg opacity-75">Modèles Exclusifs</p>
+                </div>
+                <div class="text-center">
+                    <div class="stats-counter">24/7</div>
+                    <p class="text-lg opacity-75">Service Client</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold gradient-text orbitron mb-6">COLLECTION EXCLUSIVE</h2>
+                <p class="text-xl opacity-90 max-w-2xl mx-auto">
+                    Découvrez notre gamme premium de vêtements streetwear conçus pour les vrais connaisseurs du style urbain.
+                </p>
+            </div>
+
+            <div class="product-grid">
+                <!-- Hoodie Product -->
+                <div class="card-hover bg-gray-800 rounded-lg overflow-hidden shadow-2xl relative" data-product="hoodie">
+                    <div class="product-badge">PROMO</div>
+                    <img src="https://m.media-amazon.com/images/I/71mCAveDJCS._UY1000_.jpg" alt="Hoodie Streetwear" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Hoodie Streetwear</h3>
+                        <p class="text-gray-400 mb-4">Design urbain premium avec capuche ajustable</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="price-strike text-lg">20,500 RWF</span>
+                                <span class="text-2xl font-bold text-primary">15,500 RWF</span>
+                            </div>
+                            <button class="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-cart-plus mr-2"></i>Commander
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sweater Product -->
+                <div class="card-hover bg-gray-800 rounded-lg overflow-hidden shadow-2xl relative" data-product="sweater">
+                    <div class="product-badge">PROMO</div>
+                    <img src="https://m.media-amazon.com/images/I/819tiledpkL._UY350_.jpg" alt="Sweater Cotton" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Sweater Cotton</h3>
+                        <p class="text-gray-400 mb-4">Pull en coton premium, confort absolu</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="price-strike text-lg">20,500 RWF</span>
+                                <span class="text-2xl font-bold text-primary">15,500 RWF</span>
+                            </div>
+                            <button class="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-cart-plus mr-2"></i>Commander
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Puffer Jacket -->
+                <div class="card-hover bg-gray-800 rounded-lg overflow-hidden shadow-2xl relative" data-product="jacket">
+                    <div class="product-badge">PROMO</div>
+                    <img src="https://i.etsystatic.com/50197638/r/il/d4ca51/6167941735/il_570xN.6167941735_d8h4.jpg" alt="Puffer Jacket Cropped" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Puffer Jacket Cropped</h3>
+                        <p class="text-gray-400 mb-4">Veste matelassée courte, style avant-gardiste</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="price-strike text-lg">28,500 RWF</span>
+                                <span class="text-2xl font-bold text-primary">22,000 RWF</span>
+                            </div>
+                            <button class="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-cart-plus mr-2"></i>Commander
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- T-Shirt -->
+                <div class="card-hover bg-gray-800 rounded-lg overflow-hidden shadow-2xl relative" data-product="tshirt">
+                    <img src="https://img.freepik.com/premium-vector/eighty-nine-urban-life-typography-street-wear-t-shirt-design_72192-2673.jpg" alt="T-shirt Urban" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">T-shirt Urban</h3>
+                        <p class="text-gray-400 mb-4">Design typographique exclusif, coupe moderne</p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-2xl font-bold text-primary">15,500 RWF</span>
+                            </div>
+                            <button class="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-cart-plus mr-2"></i>Commander
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-16">
+                <button class="cta-button px-8 py-4 text-lg">
+                    <i class="fas fa-eye mr-2"></i>
+                    VOIR TOUTE LA COLLECTION
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-5xl font-bold gradient-text orbitron mb-8">À PROPOS</h2>
+                    <p class="text-xl mb-6 opacity-90">
+                        Trap House Society est née de la passion pour le streetwear authentique et l'innovation dans la mode urbaine. 
+                        Notre mission est de créer des pièces uniques qui expriment votre individualité.
+                    </p>
+                    <p class="text-lg mb-8 opacity-80">
+                        Chaque vêtement est sélectionné avec soin pour offrir un style distinctif et une qualité premium. 
+                        Nous croyons que la mode est un langage universel qui transcende les barrières.
+                    </p>
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-check-circle text-primary text-2xl"></i>
+                            <span class="text-lg">Qualité Premium Garantie</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-check-circle text-primary text-2xl"></i>
+                            <span class="text-lg">Designs Exclusifs</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-check-circle text-primary text-2xl"></i>
+                            <span class="text-lg">Service Client 24/7</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="inline-block p-8 bg-gray-800 rounded-lg">
+                        <h3 class="text-3xl font-bold gradient-text mb-4">Notre Vision</h3>
+                        <p class="text-lg opacity-90">
+                            "Révolutionner le streetwear en créant des pièces qui racontent une histoire, 
+                            votre histoire."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold gradient-text orbitron mb-6">TÉMOIGNAGES</h2>
+                <p class="text-xl opacity-90">Ce que disent nos clients</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="testimonial-card">
+                    <p class="text-lg mb-4">"Qualité exceptionnelle! Mon hoodie Trap House est devenu ma pièce préférée. Style unique et confort inégalé."</p>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-user-circle text-primary text-2xl"></i>
+                        <div>
+                            <p class="font-bold">Kevin M.</p>
+                            <p class="text-sm opacity-75">Client VIP</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="text-lg mb-4">"Service client au top! Livraison rapide et produits conformes aux photos. Je recommande vivement."</p>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-user-circle text-primary text-2xl"></i>
+                        <div>
+                            <p class="font-bold">Sarah L.</p>
+                            <p class="text-sm opacity-75">Cliente régulière</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="text-lg mb-4">"Enfin une marque qui comprend le vrai streetwear! Designs originaux et qualité premium."</p>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-user-circle text-primary text-2xl"></i>
+                        <div>
+                            <p class="font-bold">Alex K.</p>
+                            <p class="text-sm opacity-75">Influenceur mode</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold gradient-text orbitron mb-6">CONTACTEZ-NOUS</h2>
+                <p class="text-xl opacity-90">Prêt à upgrader votre style ?</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-3xl font-bold mb-8">Informations Boutique</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <i class="fas fa-map-marker-alt text-primary text-2xl mt-1"></i>
+                            <div>
+                                <p class="font-bold">Adresse</p>
+                                <p class="opacity-90">Remera Kissimenti<br>Derrière Ecobank<br>Yyussa Plaza Building</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-phone text-primary text-2xl"></i>
+                            <div>
+                                <p class="font-bold">Téléphone</p>
+                                <a href="tel:+250791449915" class="text-primary hover:text-orange-400">0791449915</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-truck text-primary text-2xl"></i>
+                            <div>
+                                <p class="font-bold">Livraison</p>
+                                <p class="opacity-90">1,000 - 2,000 RWF</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-instagram text-primary text-2xl"></i>
+                            <div>
+                                <p class="font-bold">Instagram</p>
+                                <a href="https://www.instagram.com/trap_house_society/" class="text-primary hover:text-orange-400">@trap_house_society</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-3xl font-bold mb-8">Commandez Maintenant</h3>
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg">
+                            <h4 class="text-xl font-bold mb-4 text-primary">WhatsApp Direct</h4>
+                            <p class="mb-4 opacity-90">Contactez-nous directement pour passer commande</p>
+                            <a href="https://wa.me/250791449915" class="cta-button inline-block">
+                                <i class="fab fa-whatsapp mr-2"></i>
+                                Commande WhatsApp
+                            </a>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-6 rounded-lg">
+                            <h4 class="text-xl font-bold mb-4 text-primary">Newsletter</h4>
+                            <p class="mb-4 opacity-90">Restez informé des nouveautés et promotions</p>
+                            <div class="flex">
+                                <input type="email" class="newsletter-input flex-1 mr-2" placeholder="Votre email">
+                                <button class="bg-primary hover:bg-orange-600 text-white px-6 py-3 rounded-lg">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="logo-container">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMjgiIHN0cm9rZT0iIzFBMUExQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxwYXRoIGQ9Ik0xNSAxNUg0NVY0NUgzNVYyNUgyNVYzNUgxNVYxNVoiIGZpbGw9IiMxQTFBMUEiLz4KPHRleHQgeD0iMzAiIHk9IjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iT3JiaXRyb24iIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxQTFBMUEiPlRIUzwvdGV4dD4KPC9zdmc+" alt="Trap House Society" class="w-8 h-8">
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold gradient-text orbitron">TRAP HOUSE SOCIETY</h3>
+                        </div>
+                    </div>
+                    <p class="opacity-75 mb-4">First CLASS of Frippery Drips</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/trap_house_society/" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://wa.me/250791449915" class="social-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="tel:+250791449915" class="social-icon">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Navigation</h4>
+                    <ul class="space-y-2 opacity-75">
+                        <li><a href="#home" class="hover:text-primary transition-colors">Accueil</a></li>
+                        <li><a href="#products" class="hover:text-primary transition-colors">Produits</a></li>
+                        <li><a href="#about" class="hover:text-primary transition-colors">À Propos</a></li>
+                        <li><a href="#contact" class="hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-xl font-bold mb-4">Légal</h4>
+                    <ul class="space-y-2 opacity-75">
+                        <li><a href="#" class="hover:text-primary transition-colors">Conditions d'utilisation</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Politique de confidentialité</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Politique de retour</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section-divider"></div>
+            
+            <div class="text-center">
+                <p class="opacity-75">
+                    © 2024 Trap House Society. Tous droits réservés. 
+                    <span class="text-primary">Designed with ❤️ for streetwear lovers</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CMS Access Button -->
+    <div class="cms-trigger" id="cms-access" title="Accès CMS">
+        <i class="fas fa-cog"></i>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Product interaction
+        document.querySelectorAll('[data-product]').forEach(product => {
+            product.addEventListener('click', function() {
+                const productType = this.dataset.product;
+                const productName = this.querySelector('h3').textContent;
+                const whatsappMessage = `Bonjour! Je suis intéressé par le produit: ${productName}`;
+                const whatsappUrl = `https://wa.me/250791449915?text=${encodeURIComponent(whatsappMessage)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+        });
+
+        // Order buttons
+        document.querySelectorAll('button:has(.fa-cart-plus)').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const productCard = this.closest('[data-product]');
+                const productName = productCard.querySelector('h3').textContent;
+                const productPrice = productCard.querySelector('.text-primary').textContent;
+                const whatsappMessage = `Bonjour! Je souhaite commander: ${productName} - Prix: ${productPrice}`;
+                const whatsappUrl = `https://wa.me/250791449915?text=${encodeURIComponent(whatsappMessage)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+        });
+
+        // Newsletter subscription
+        document.querySelector('.newsletter-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const email = this.value;
+                if (email) {
+                    alert('Merci pour votre inscription à la newsletter!');
+                    this.value = '';
+                }
+            }
+        });
+
+        // CMS Access
+        document.getElementById('cms-access').addEventListener('click', function() {
+            window.open('https://ehpitdke.gensparkspace.com/', '_blank');
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.card-hover, .testimonial-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Dynamic CSS custom properties
+        document.documentElement.style.setProperty('--primary-color', '#FF6B35');
+        document.documentElement.style.setProperty('--secondary-color', '#1A1A1A');
+        document.documentElement.style.setProperty('--accent-color', '#00F5FF');
+
+        // Add loading animation
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+
+        // API Integration placeholder for CMS
+        const cmsAPI = {
+            async getProducts() {
+                // This would connect to GitHub API to fetch product data
+                return [];
+            },
+            async updateProduct(productId, data) {
+                // This would update product data via GitHub API
+                return true;
+            },
+            async uploadImage(file) {
+                // This would upload image to GitHub repository
+                return 'image_url';
+            }
+        };
+
+        // Stats counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stats-counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent);
+                const increment = target / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target + '+';
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.ceil(current);
+                    }
+                }, 20);
+            });
+        }
+
+        // Trigger counter animation when in view
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        const statsSection = document.querySelector('.stats-counter').closest('.grid');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Preload critical images
+        const criticalImages = [
+            'https://m.media-amazon.com/images/I/71mCAveDJCS._UY1000_.jpg',
+            'https://m.media-amazon.com/images/I/819tiledpkL._UY350_.jpg',
+            'https://i.etsystatic.com/50197638/r/il/d4ca51/6167941735/il_570xN.6167941735_d8h4.jpg',
+            'https://img.freepik.com/premium-vector/eighty-nine-urban-life-typography-street-wear-t-shirt-design_72192-2673.jpg'
+        ];
+
+        criticalImages.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+
+        console.log('🔥 Trap House Society Website Loaded Successfully!');
+        console.log('CMS Integration Ready for GitHub/Vercel deployment');
+    </script>
+</body>
+</html>
