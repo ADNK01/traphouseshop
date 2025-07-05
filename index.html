@@ -165,6 +165,14 @@
                 NOTRE COLLECTION
             </h2>
             
+            <!-- Dynamic Products from JSON -->
+            <div class="mb-16">
+                <h3 class="text-3xl font-bold mb-8 gradient-text">
+                    <i class="fas fa-tshirt mr-3"></i>COLLECTION PREMIUM
+                </h3>
+                <div id="product-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+
             <!-- Hoodies -->
             <div class="mb-16">
                 <h3 class="text-3xl font-bold mb-8 gradient-text">
@@ -482,6 +490,48 @@
                 parallax.style.transform = `translateY(${speed}px)`;
             }
         });
+    </script>
+
+    <script>
+        fetch('data/products.json')
+            .then(response => response.json())
+            .then(products => {
+                const container = document.getElementById('product-list');
+                products.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'card-hover bg-gray-900 rounded-lg overflow-hidden';
+                    card.innerHTML = `
+                        <img src="${product.image}" alt="${product.title}" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h4 class="text-xl font-bold mb-2">${product.title}</h4>
+                            <p class="text-gray-400 mb-4">${product.description}</p>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="price-strike text-sm mr-2">${product.oldPrice} RWF</span>
+                                    <span class="price-new text-xl">${product.price} RWF</span>
+                                </div>
+                                <button onclick="orderProduct('${product.title}')" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded transition">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.log('Erreur lors du chargement des produits:', error);
+                // Fallback message in case JSON file is not available
+                const container = document.getElementById('product-list');
+                container.innerHTML = '<p class="text-center text-gray-400">Chargement des produits en cours...</p>';
+            });
+
+        function orderProduct(productName) {
+            const number = "0791449915";
+            const message = `Hello, I'm interested in the product: ${productName}`;
+            const url = `https://wa.me/25${number}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
     </script>
 </body>
 </html>
