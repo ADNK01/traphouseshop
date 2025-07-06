@@ -327,6 +327,7 @@
             box-shadow: var(--neon-glow);
         }
     </style>
+    <script src="https://unpkg.com/@sanity/client/dist/sanity.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -732,179 +733,359 @@
 
     <!-- Scripts -->
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuClose = document.getElementById('mobile-menu-close');
+       // Configuration Sanity Client
+const sanityClient = sanity.createClient({
+    projectId: '82rs1f6x', // Remplacez par votre vrai Project ID
+    dataset: 'production',
+    useCdn: true,
+    apiVersion: '2021-10-21'
+});
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.add('active');
-        });
+// ========== FONCTIONS SANITY ==========
 
-        mobileMenuClose.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-        });
+// Charger les produits depuis Sanity
+async function loadProducts() {
+    try {
+        const products = await sanityClient.fetch(`
+            *[_type == "product"] {
+                _id,
+                name,
+                description,
+                price,
+                originalPrice,
+                image,
+                category,
+                isPromo,
+                badge
+            }
+        `);
+        
+        if (products.length > 0) {
+            displayProducts(products);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des produits:', error);
+    }
+}
 
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-            });
-        });
+// Afficher les produits dans le HTML
+function displayProducts(products) {
+    const productGrid = document.querySelector('.product-grid');
+    if (!productGrid) return;
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+    productGrid.innerHTML = products.map(product => `
+        <div class="card-hover bg-gray-800 rounded-lg overflow-hidden shadow-2xl relative" data-product="${product._id}">
+            ${product.isPromo ? '<div class="product-badge">PROMO</div>' : ''}
+            ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+            <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover">
+            <div class="p-6">
+                <h3 class="text-2xl font-bold mb-2">${product.name}</h3>
+                <p class="text-gray-400 mb-4">${product.description}</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        ${product.originalPrice ? `<span class="price-strike text-lg">${product.originalPrice} RWF</span>` : ''}
+                        <span class="text-2xl font-bold text-primary">${product.price} RWF</span>
+                    </div>
+                    <button class="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors order-btn">
+                        <i class="fas fa-cart-plus mr-2"></i>Commander
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 
-        // Product interaction
-        document.querySelectorAll('[data-product]').forEach(product => {
-            product.addEventListener('click', function() {
-                const productType = this.dataset.product;
-                const productName = this.querySelector('h3').textContent;
-                const whatsappMessage = `Bonjour! Je suis intéressé par le produit: ${productName}`;
-                const whatsappUrl = `https://wa.me/250791449915?text=${encodeURIComponent(whatsappMessage)}`;
-                window.open(whatsappUrl, '_blank');
-            });
-        });
+    // Réattacher les événements pour les nouveaux produits
+    attachProductEvents();
+}
 
-        // Order buttons
-        document.querySelectorAll('button:has(.fa-cart-plus)').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const productCard = this.closest('[data-product]');
-                const productName = productCard.querySelector('h3').textContent;
-                const productPrice = productCard.querySelector('.text-primary').textContent;
-                const whatsappMessage = `Bonjour! Je souhaite commander: ${productName} - Prix: ${productPrice}`;
-                const whatsappUrl = `https://wa.me/250791449915?text=${encodeURIComponent(whatsappMessage)}`;
-                window.open(whatsappUrl, '_blank');
-            });
-        });
+// Charger les paramètres du site depuis Sanity
+async function loadSiteSettings() {
+    try {
+        const settings = await sanityClient.fetch(`
+            *[_type == "siteSettings"][0] {
+                siteName,
+                siteDescription,
+                logo,
+                heroTitle,
+                heroSubtitle,
+                heroDescription,
+                contactPhone,
+                contactAddress,
+                instagramUrl,
+                whatsappNumber
+            }
+        `);
+        
+        if (settings) {
+            updateSiteContent(settings);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des paramètres:', error);
+    }
+}
 
-        // Newsletter subscription
-        document.querySelector('.newsletter-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const email = this.value;
-                if (email) {
-                    alert('Merci pour votre inscription à la newsletter!');
-                    this.value = '';
-                }
+// Mettre à jour le contenu du site avec les données Sanity
+function updateSiteContent(settings) {
+    // Titre du site
+    if (settings.siteName) {
+        document.title = settings.siteName;
+        document.querySelectorAll('.gradient-text.orbitron').forEach(el => {
+            if (el.textContent.includes('TRAP HOUSE')) {
+                el.textContent = settings.siteName;
             }
         });
+    }
 
-        // CMS Access
-        document.getElementById('cms-access').addEventListener('click', function() {
-            window.open('https://ehpitdke.gensparkspace.com/', '_blank');
+    // Description du héros
+    if (settings.heroDescription) {
+        const heroDescription = document.querySelector('section p');
+        if (heroDescription) {
+            heroDescription.innerHTML = settings.heroDescription;
+        }
+    }
+
+    // Logo
+    if (settings.logo) {
+        document.querySelectorAll('img[alt*="Logo"]').forEach(img => {
+            img.src = settings.logo;
         });
+    }
 
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.card-hover, .testimonial-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
+    // Numéro de téléphone
+    if (settings.contactPhone) {
+        document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+            link.href = `tel:${settings.contactPhone}`;
+            link.textContent = settings.contactPhone;
         });
+    }
 
-        // Dynamic CSS custom properties
-        document.documentElement.style.setProperty('--primary-color', '#FF6B35');
-        document.documentElement.style.setProperty('--secondary-color', '#1A1A1A');
-        document.documentElement.style.setProperty('--accent-color', '#00F5FF');
-
-        // Add loading animation
-        window.addEventListener('load', function() {
-            document.body.classList.add('loaded');
+    // WhatsApp
+    if (settings.whatsappNumber) {
+        document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+            link.href = link.href.replace(/\d+/, settings.whatsappNumber);
         });
+    }
 
-        // API Integration placeholder for CMS
-        const cmsAPI = {
-            async getProducts() {
-                // This would connect to GitHub API to fetch product data
-                return [];
-            },
-            async updateProduct(productId, data) {
-                // This would update product data via GitHub API
-                return true;
-            },
-            async uploadImage(file) {
-                // This would upload image to GitHub repository
-                return 'image_url';
+    // Instagram
+    if (settings.instagramUrl) {
+        document.querySelectorAll('a[href*="instagram.com"]').forEach(link => {
+            link.href = settings.instagramUrl;
+        });
+    }
+}
+
+// Charger les témoignages depuis Sanity
+async function loadTestimonials() {
+    try {
+        const testimonials = await sanityClient.fetch(`
+            *[_type == "testimonial"] {
+                name,
+                role,
+                message,
+                rating
             }
-        };
+        `);
+        
+        if (testimonials.length > 0) {
+            displayTestimonials(testimonials);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des témoignages:', error);
+    }
+}
 
-        // Stats counter animation
-        function animateCounters() {
-            const counters = document.querySelectorAll('.stats-counter');
-            counters.forEach(counter => {
-                const target = parseInt(counter.textContent);
-                const increment = target / 100;
-                let current = 0;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        counter.textContent = target + '+';
-                        clearInterval(timer);
-                    } else {
-                        counter.textContent = Math.ceil(current);
-                    }
-                }, 20);
+// Afficher les témoignages
+function displayTestimonials(testimonials) {
+    const testimonialsContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-8');
+    if (!testimonialsContainer) return;
+
+    testimonialsContainer.innerHTML = testimonials.map(testimonial => `
+        <div class="testimonial-card">
+            <p class="text-lg mb-4">"${testimonial.message}"</p>
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-user-circle text-primary text-2xl"></i>
+                <div>
+                    <p class="font-bold">${testimonial.name}</p>
+                    <p class="text-sm opacity-75">${testimonial.role}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ========== ÉVÉNEMENTS ==========
+
+// Attacher les événements aux produits
+function attachProductEvents() {
+    // Événements pour les cartes produits
+    document.querySelectorAll('[data-product]').forEach(product => {
+        product.addEventListener('click', function() {
+            const productName = this.querySelector('h3').textContent;
+            const whatsappMessage = `Bonjour! Je suis intéressé par le produit: ${productName}`;
+            const whatsappUrl = `https://wa.me/250791449915?text=${encodeURIComponent(whatsappMessage)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+    });
+
+    // Événements pour les boutons de commande
+    document.querySelectorAll('.order-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const productCard = this.closest('[data-product]');
+            const productName = productCard.querySelector('h3').textContent;
+            const productPrice = productCard.querySelector('.text-primary').textContent;
+            const whatsappMessage = `Bonjour! Je souhaite commander: ${productName} - Prix: ${productPrice}`;
+            const whatsappUrl = `https://wa.me/250791449915?text=${encodeURIComponent(whatsappMessage)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+    });
+}
+
+// ========== FONCTIONS ORIGINALES ==========
+
+// Mobile Menu Toggle
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+mobileMenuBtn.addEventListener('click', () => {
+    mobileMenu.classList.add('active');
+});
+
+mobileMenuClose.addEventListener('click', () => {
+    mobileMenu.classList.remove('active');
+});
+
+// Close mobile menu when clicking on a link
+document.querySelectorAll('#mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+    });
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         }
+    });
+});
 
-        // Trigger counter animation when in view
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    statsObserver.unobserve(entry.target);
-                }
-            });
-        });
-
-        const statsSection = document.querySelector('.stats-counter').closest('.grid');
-        if (statsSection) {
-            statsObserver.observe(statsSection);
+// Newsletter subscription
+document.querySelector('.newsletter-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        const email = this.value;
+        if (email) {
+            alert('Merci pour votre inscription à la newsletter!');
+            this.value = '';
         }
+    }
+});
 
-        // Preload critical images
-        const criticalImages = [
-            'https://m.media-amazon.com/images/I/71mCAveDJCS._UY1000_.jpg',
-            'https://m.media-amazon.com/images/I/819tiledpkL._UY350_.jpg',
-            'https://i.etsystatic.com/50197638/r/il/d4ca51/6167941735/il_570xN.6167941735_d8h4.jpg',
-            'https://img.freepik.com/premium-vector/eighty-nine-urban-life-typography-street-wear-t-shirt-design_72192-2673.jpg'
-        ];
+// CMS Access
+document.getElementById('cms-access').addEventListener('click', function() {
+    window.open('https://ehpitdke.gensparkspace.com/', '_blank');
+});
 
-        criticalImages.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
 
-        console.log('🔥 Trap House Society Website Loaded Successfully!');
-        console.log('CMS Integration Ready for GitHub/Vercel deployment');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+document.querySelectorAll('.card-hover, .testimonial-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+});
+
+// Stats counter animation
+function animateCounters() {
+    const counters = document.querySelectorAll('.stats-counter');
+    counters.forEach(counter => {
+        const target = parseInt(counter.textContent);
+        const increment = target / 100;
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                counter.textContent = target + '+';
+                clearInterval(timer);
+            } else {
+                counter.textContent = Math.ceil(current);
+            }
+        }, 20);
+    });
+}
+
+// Trigger counter animation when in view
+const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounters();
+            statsObserver.unobserve(entry.target);
+        }
+    });
+});
+
+const statsSection = document.querySelector('.stats-counter').closest('.grid');
+if (statsSection) {
+    statsObserver.observe(statsSection);
+}
+
+// Preload critical images
+const criticalImages = [
+    'https://m.media-amazon.com/images/I/71mCAveDJCS._UY1000_.jpg',
+    'https://m.media-amazon.com/images/I/819tiledpkL._UY350_.jpg',
+    'https://i.etsystatic.com/50197638/r/il/d4ca51/6167941735/il_570xN.6167941735_d8h4.jpg',
+    'https://img.freepik.com/premium-vector/eighty-nine-urban-life-typography-street-wear-t-shirt-design_72192-2673.jpg'
+];
+
+criticalImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+});
+
+// ========== INITIALISATION ==========
+
+// Charger tout le contenu Sanity au démarrage
+document.addEventListener('DOMContentLoaded', function() {
+    loadProducts();
+    loadSiteSettings();
+    loadTestimonials();
+    
+    // Attacher les événements aux produits existants
+    attachProductEvents();
+});
+
+// Recharger les données toutes les 5 minutes
+setInterval(() => {
+    loadProducts();
+    loadSiteSettings();
+    loadTestimonials();
+}, 300000);
+
+console.log('🔥 Trap House Society Website Loaded Successfully!');
+console.log('✅ Sanity.io Integration Active');
+
     </script>
 </body>
 </html>
